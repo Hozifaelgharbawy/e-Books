@@ -3,7 +3,7 @@ let mongoose = require("mongoose");
 
 let userSchema = mongoose.Schema({
     fristName: { type: String, required: true },
-    LastName: { type: String, required: true },
+    lastName: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
     userName: { type: String, required: true },
@@ -11,13 +11,17 @@ let userSchema = mongoose.Schema({
     isActive: { type: Boolean, default: false },
     myBooks: [{
         type: mongoose.Types.ObjectId,
-        ref: "Books"
+        ref: "books"
     }],
     role: {
         type: String,
         enum: ["superAdmin", "admin", "seller", "customer"],
         default: "customer"
-    }
+    },
+    favorite: [{
+        type: mongoose.Types.ObjectId,
+        ref: "books"
+    }]
 })
 
 
