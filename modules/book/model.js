@@ -8,7 +8,8 @@ let bookSchema = mongoose.Schema({
     fileUrl: { type: String, required: true },
     coverUrl: { type: String, required: true },
     offer: { type: Number, required: false },
-    demo: { type: Number, required: true }
+    demo: { type: String, required: true },
+    author: [{ type: String, required: true }]
 })
 
 let bookModel = mongoose.model("books", bookSchema)
