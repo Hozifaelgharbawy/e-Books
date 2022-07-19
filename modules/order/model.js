@@ -6,18 +6,18 @@ let orderSchema = mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "users"
     },
+    cartId: {
+        type: mongoose.Types.ObjectId,
+        ref: "carts"
+    },
+    total: { type: Number, required: true },
     items: [
         {
             book: { type: mongoose.Types.ObjectId, ref: "books" },
             quantity: Number,
             total: Number
         }
-    ],
-    total: { type: Number, required: true },
-    promoCode: {
-        type: mongoose.Types.ObjectId,
-        ref: "coupons"
-    }
+    ]
 })
 
 let orderModel = mongoose.model("orders", orderSchema)

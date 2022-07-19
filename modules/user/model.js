@@ -1,4 +1,6 @@
 let mongoose = require("mongoose");
+let bcrypt = require("bcrypt");
+let saltrouds = 5;
 
 
 let userSchema = mongoose.Schema({
@@ -23,6 +25,10 @@ let userSchema = mongoose.Schema({
     }]
 })
 
+userSchema.pre("save", async function(next){
+    this.password = await bcrypt.hash(this.password, saltrouds) ;
+    next();
+})
 
 let userModel = mongoose.model("users", userSchema)
 

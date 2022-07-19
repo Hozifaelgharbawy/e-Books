@@ -1,5 +1,6 @@
 const { findById } = require("./model");
 let User = require("./model")
+let bcrypt = require("bcrypt");
 
 
 exports.list = async () => {
@@ -110,7 +111,9 @@ exports.isExist = async (value) => {
 
 exports.comparePassword = async (email, password) => {
     let user = await User.findOne({email})
-    if (password == user.password) {
+    var match = await bcrypt.compare(password, user.password)
+    if (match) {
+    
         return {
             success: true,
             user: user,

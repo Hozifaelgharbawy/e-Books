@@ -1,6 +1,11 @@
 const { findById } = require("./model");
 let Book = require("./model")
 
+exports.list = async () => {
+    let allBook = await Book.find({}).select("-fileUrl").select("-coverUrl").select("-_id").select("-__v");
+    return allBook;
+}
+
 exports.get = async (id) => {
     if(id) return await this.isExist(id);
     else {
@@ -32,8 +37,8 @@ exports.create = async (form) => {
 
 exports.update = async (id, form) => {
     const book = await this.isExist(id);
-    if(id && user.success) {
-        let bookUpdate = await book.findByIdAndUpdate({_id: id}, form)
+    if(id && book.success) {
+        const bookUpdate = await Book.findByIdAndUpdate({_id: id}, form)
         return {
             success: true,
             book: bookUpdate,
@@ -61,13 +66,14 @@ exports.remove = async (id) => {
     else {
         return {
             success: false,
+            error: book.error,
             code: 404
         };
     }
 }
 
 exports.isExist = async (value) => {
-    const book = await Book.findOne({ _id: value})
+    const book = await Book.findOne({ _id: value}).select("-fileUrl").select("-coverUrl").select("-_id").select("-__v");
     if(book) {
         return {
             success: true,

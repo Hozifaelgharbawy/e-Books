@@ -31,10 +31,10 @@ module.exports = {
                 "string.max": "number of character must be between 5 and 20"
             }),
             age: joi.number().required().min(18).max(100).messages({
-                "string.base": "please enter a valid age",
+                "number.base": "please enter a valid age",
                 "any.required": "age must be entered",
-                "string.min": "the age must be between 18 and 100",
-                "string.max": "the age must be between 18 and 100"
+                "number.min": "the age must be between 18 and 100",
+                "number.max": "the age must be between 18 and 100"
             }),
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "please enter a valid isActive status"
@@ -64,21 +64,26 @@ module.exports = {
 
 
     updateUserValidation:{
+        
         body: joi.object().required().keys({
+
             name: joi.string().empty().optional().pattern(new RegExp(/^[a-z ,.'-]+$/i)).messages({
                 "string.base": "please enter a valid name",
                 "string.empty": "name cannot be empty",
                 "string.pattern.base": "please enter a valid name "
             }),
+
             email: joi.string().email({minDomainSegments: 2, tlds: {allow: ['com']}}).empty().optional().messages({
                 "string.email" : "please enter a valid email",
                 "string.empty" : "email cannot be empty"
             }),
+
             password: joi.string().empty().optional().pattern(new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)).messages({
                 "string.base" : "please enter a valid password",
                 "string.empty" : "password cannot be empty",
                 "string.pattern.base" : "please enter a valid password A-Z, a-z, 1-9, special character",
             }),
+
             userName: joi.string().empty().alphanum().optional().min(5).max(20).messages({
                 "string.base": "please enter a valid user name",
                 "string.empty": "user name cannot be empty",
@@ -86,17 +91,55 @@ module.exports = {
                 "string.min": "number of character must be between 5 and 20",
                 "string.max": "number of character must be between 5 and 20"
             }),
+
             age: joi.number().optional().min(18).max(100).messages({
-                "string.base": "please enter a valid age",
-                "string.min": "the age must be between 18 and 100",
-                "string.max": "the age must be between 18 and 100"
+                "number.base": "please enter a valid age",
+                "number.min": "the age must be between 18 and 100",
+                "number.max": "the age must be between 18 and 100"
             }),
+
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "please enter a valid isActive status"
             }),
+
             role: joi.string().optional().messages({
                 "string.base": "please enter a valid role (seller or customer)"
-            })
+            }),
+
+            myBooks: joi.alternatives().optional().try(
+                joi.string().empty().required().messages({
+                    "string.base": "please enter a valid Book",
+                    "any.required": "Book must be entered",
+                    "string.empty": "Book cannot be empty"
+                }),
+                joi.array().min(2).required().items(joi.string().empty().required().messages({
+                    "string.base": "please enter a valid Book",
+                    "any.required": "Book must be entered",
+                    "string.empty": "Book cannot be empty"
+                })).messages({
+                    "array.base": "please enter a valid Book",
+                    "any.required": "you have to enter at least one Book",
+                    "array.min": "you have to enter at least one Book"
+                })
+            ),
+
+            favorite: joi.alternatives().optional().try(
+                joi.string().empty().required().messages({
+                    "string.base": "please enter a valid Book",
+                    "any.required": "Book must be entered",
+                    "string.empty": "favorite cannot be empty"
+                }),
+                joi.array().min(2).required().items(joi.string().empty().required().messages({
+                    "string.base": "please enter a valid Book",
+                    "any.required": "Book must be entered",
+                    "string.empty": "favorite cannot be empty"
+                })).messages({
+                    "array.base": "please enter a valid Book",
+                    "any.required": "you have to enter at least one Book",
+                    "array.min": "you have to enter at least one Book"
+                })
+            )
+
         })
     }
 
