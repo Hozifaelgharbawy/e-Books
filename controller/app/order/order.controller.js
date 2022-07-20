@@ -1,15 +1,13 @@
-let { get, create, list, update, remove } = require("../../../modules/order/repo")
+let { get, create, update, remove } = require("../../../modules/order/repo")
+let myBook = require("./healper/myBook")
 
 
-exports.getAllOrder = async(req, res) => {
-    const result = await list();
-    console.log(result)
-    res.status(result.code).json({ Orders: result.AllOrder})
-}
 
 exports.addOrder = async (req, res) => {
+    let { userId, items } = req.body
     const result = await create(req.body);
     console.log(result)
+    myBook.addMyBook( items.book,userId);
     res.status(result.code).json({ Order: result.order })
 }
 

@@ -25,15 +25,15 @@ module.exports = {
             }),
             
             items: joi.alternatives().optional().try(
-                joi.string().empty().required().messages({
-                    "string.base": "please enter a valid items",
+                joi.object().empty().required().messages({
+                    "object.base": "please enter a valid items",
                     "any.required": "items must be entered",
-                    "string.empty": "items cannot be empty"
+                    "object.empty": "items cannot be empty"
                 }),
-                joi.array().min(2).required().items(joi.string().empty().required().messages({
-                    "string.base": "please enter a valid items",
+                joi.array().min(2).required().items(joi.object().empty().required().messages({
+                    "object.base": "please enter a valid items",
                     "any.required": "items must be entered",
-                    "string.empty": "items cannot be empty"
+                    "object.empty": "items cannot be empty"
                 })).messages({
                     "array.base": "please enter a valid items",
                     "any.required": "you have to enter at least one items",
@@ -64,17 +64,17 @@ module.exports = {
             }),
             
             items: joi.alternatives().optional().try(
-                joi.string().empty().required().messages({
-                    "string.base": "please enter a valid items",
+                joi.object().empty().required().messages({
+                    "object.base": "please enter a valid items",
                     "any.required": "items must be entered",
-                    "string.empty": "items cannot be empty"
+                    "object.empty": "items cannot be empty"
                 }),
-                joi.array().min(2).required().items(joi.string().empty().required().messages({
-                    "string.base": "please enter a valid items",
+                joi.array().required().items(joi.object().empty().required().messages({
+                    "object.base": "please a enter a valid items",
                     "any.required": "items must be entered",
-                    "string.empty": "items cannot be empty"
+                    "object.empty": "items cannot be empty"
                 })).messages({
-                    "array.base": "please enter a valid items",
+                    "array.base": "please s enter a valid items",
                     "any.required": "you have to enter at least one items",
                     "array.min": "you have to enter at least one items"
                 })

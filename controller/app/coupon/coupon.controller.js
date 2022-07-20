@@ -10,32 +10,32 @@ exports.getAllCoupon = async(req, res) => {
 exports.addCoupon = async (req, res) => {
     const result = await create(req.body);
     console.log(result)
-    res.status(200).json({ Coupon: result.coupon })
+    res.status(result.code).json({ Coupon: result.coupon })
 }
 
 exports.deleteCoupon = async(req, res) => {
     const result = await remove(req.params.id)
     console.log(result);
         if (result.success) {
-        res.status(200).json({ massage: "Sucsses!" })
+        res.status(result.code).json({ massage: "Sucsses!" })
     }
     else {
-        res.status(404).json({ message: "Error!", error: result.error})
+        res.status(result.code).json({ message: "Error!", error: result.error})
     }
 }
 
 exports.updateCoupon = async(req, res) => {
     const result = await update(req.params.id, req.body)
     if (result.success) {
-        res.status(200).json({ massage: "Sucsses!", Coupon: result.coupon})
+        res.status(result.code).json({ massage: "Sucsses!", Coupon: result.coupon})
     }
     else {
-        res.status(404).json({ massage: "Error!", error: result.error})
+        res.status(result.code).json({ massage: "Error!", error: result.error})
     }
 }
 
 exports.getCouponById = async(req, res) => {
     const result = await get(req.params.id)
     console.log(result)
-    res.status(200).json({ Coupon: result.coupon})
+    res.status(result.code).json({ Coupon: result.coupon})
 }

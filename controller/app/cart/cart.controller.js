@@ -6,7 +6,7 @@ let User = require("../../../modules/user/repo")
 
 exports.createCart = async (req, res) => {
     const result = await create(req.body);
-    res.status(200).json({ cart: result.cart })
+    res.status(result.code).json({ cart: result.cart })
 }
 
 exports.getMyCart = async(req, res) => {
@@ -41,9 +41,9 @@ exports.deleteBookInCart = async(req, res) => {
     const result = await remove(req.params.userId, {items: myBook.book})
     console.log(result.cart)
     if(result.success) {
-        res.status(200).json({ items: result.cart})
+        res.status(result.code).json({ items: result.cart})
     }
     else{
-        res.status(200).json({ message: "Book Not in cart" })
+        res.status(result.code).json({ message: "Book Not in cart" })
     }
 }

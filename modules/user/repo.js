@@ -39,7 +39,8 @@ exports.create = async (form) => {
 
 exports.update = async (id, form) => {
     const user = await this.isExist(id);
-    if(id && user.success) {
+    console.log(user);
+    if(user.success) {
         let userUpdate = await User.findByIdAndUpdate({_id: id}, form)
         return {
             success: true,

@@ -1,5 +1,6 @@
 const app = require("express").Router();
 let controller = require("../controller/app/user/user.controller");
+let adminController = require("../controller/admin/user/user.controller");
 let { registerValidation, loginValidation, updateUserValidation } = require("../validation/user.validation")
 let validator = require("../helpers/common.validate")
 
@@ -13,11 +14,10 @@ app.delete("/app/deleteBookInFavorite/:bookId/:userId", controller.deleteBookInF
 app.get("/app/getMyBooks/:id", controller.getMyBooks)
 
 //--------------------------------
-app.get("/app/getUserById/:id", controller.getUserById)
-app.get("/app/getAllUser", controller.getAllUser)
-app.delete("/app/delete/:id", controller.delete)
-app.put("/app/addMyBook/:bookId/:userId", validator(updateUserValidation), controller.addMyBook)
-
+app.get("/admin/getUserById/:id", adminController.getUserById)
+app.get("/admin/getAllUser", adminController.getAllUser)
+app.delete("/admin/delete/:id", adminController.delete)
+app.put("/admin/upgradeRole/:id", validator(updateUserValidation), adminController.upgradeRole)
 
 
 module.exports = app
