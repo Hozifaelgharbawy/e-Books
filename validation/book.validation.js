@@ -66,7 +66,12 @@ module.exports = {
                 })
             ).messages({
                 "any.required": "you have to enter at least one author"
-            })
+            }),
+            category: joi.string().empty().required().messages({
+                "string.base": "please enter a valid category",
+                "any.required": "category must be entered",
+                "string.empty": "category cannot be empty"
+            }),
         })
     },
 
@@ -125,7 +130,11 @@ module.exports = {
                     "any.required": "you have to enter at least one author",
                     "array.min": "you have to enter at least one author"
                 })
-            )
+            ),
+            category: joi.string().empty().optional().messages({
+                "string.base": "please enter a valid category",
+                "string.empty": "category cannot be empty"
+            }),
 
         })
     }

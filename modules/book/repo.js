@@ -1,9 +1,9 @@
 const { findById } = require("./model");
 let Book = require("./model")
 
-exports.list = async () => {
-    let allBook = await Book.find({}).select("-fileUrl").select("-coverUrl").select("-_id").select("-__v");
-    return allBook;
+exports.list = async (filter) => {
+    let records = await Book.find(filter).select("-fileUrl");
+    return records;
 }
 
 exports.get = async (id) => {
@@ -23,7 +23,7 @@ exports.create = async (form) => {
         await book.save();
         return {
             success: true,
-            book: book,
+            record: book,
             code: 200
         };
     }
@@ -41,7 +41,7 @@ exports.update = async (id, form) => {
         const bookUpdate = await Book.findByIdAndUpdate({_id: id}, form)
         return {
             success: true,
-            book: bookUpdate,
+            record: bookUpdate,
             code: 200
         };
     }
@@ -73,11 +73,11 @@ exports.remove = async (id) => {
 }
 
 exports.isExist = async (value) => {
-    const book = await Book.findOne({ _id: value}).select("-fileUrl").select("-coverUrl").select("-_id").select("-__v");
+    const book = await Book.findOne({ _id: value}).select("-fileUrl");
     if(book) {
         return {
             success: true,
-            book: book,
+            record: book,
             code: 200
         };
     }

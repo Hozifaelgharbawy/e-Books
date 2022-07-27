@@ -4,8 +4,8 @@ let bcrypt = require("bcrypt");
 
 
 exports.list = async () => {
-    let allUser = await User.find({})
-    return allUser;
+    let records = await User.find({}).select("-password")
+    return records;
 }
 
 exports.get = async (id) => {
@@ -25,7 +25,7 @@ exports.create = async (form) => {
         await user.save();
         return {
             success: true,
-            user: user,
+            record: user,
             code: 200
         };
     }
@@ -41,10 +41,30 @@ exports.update = async (id, form) => {
     const user = await this.isExist(id);
     console.log(user);
     if(user.success) {
-        let userUpdate = await User.findByIdAndUpdate({_id: id}, form)
+        let userUpdate = await User.findByIdAndUpdate({_id: id},  form)
         return {
             success: true,
-            user: userUpdate,
+            record: userUpdate,
+            code: 200
+        };
+    }
+    else {
+        return {
+            success: false,
+            error: user.error,
+            code: 404
+        };
+    }
+}
+
+exports.updateArray = async (id, form) => {
+    const user = await this.isExist(id);
+    console.log(user);
+    if(user.success) {
+        let userUpdate = await User.findByIdAndUpdate({_id: id},  {$addToSet: form})
+        return {
+            success: true,
+            record: userUpdate,
             code: 200
         };
     }
@@ -77,10 +97,10 @@ exports.remove = async (id) => {
 exports.removeBook = async (id, book) => {
     const user = await this.isExist(id);
     if(id && user.success) {
-        await User.deleteOne(book)
+        await User.findByIdAndUpdate({_id: id},  {$pull: book})
         return {
             success: true,
-            user: user,
+            record: user.record,
             code: 200
         };
     }
@@ -93,11 +113,11 @@ exports.removeBook = async (id, book) => {
 }
 
 exports.isExist = async (value) => {
-    const user = await User.findOne({ _id: value})
+    const user = await User.findOne({ _id: value}).select("-password")
     if(user) {
         return {
             success: true,
-            user: user,
+            record: user,
             code: 200
         };
     }
@@ -117,7 +137,7 @@ exports.comparePassword = async (email, password) => {
     
         return {
             success: true,
-            user: user,
+            record: user,
             code: 200
         };
     }

@@ -1,8 +1,8 @@
 let Coupon = require("./model")
 
 exports.list = async () => {
-    let AllCoupon = await Coupon.find({})
-    return AllCoupon;
+    let records = await Coupon.find({})
+    return records;
 }
 
 exports.get = async (id) => {
@@ -22,7 +22,7 @@ exports.create = async (form) => {
         await coupon.save();
         return {
             success: true,
-            coupon: coupon,
+            record: coupon,
             code: 200
         };
     }
@@ -41,7 +41,7 @@ exports.update = async (id, form) => {
         const couponUpdate = await Coupon.findOneAndUpdate({_id: id}, form)
         return {
             success: true,
-            coupon: couponUpdate,
+            record: couponUpdate,
             code: 200
         };
     }
@@ -77,7 +77,7 @@ exports.isExist = async (value) => {
     if(coupon) {
         return {
             success: true,
-            coupon: coupon,
+            record: coupon,
             code: 200
         };
     }

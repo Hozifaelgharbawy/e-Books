@@ -1,17 +1,15 @@
-let { get, create, update, remove } = require("../../../modules/order/repo")
-let myBook = require("./healper/myBook")
+let { get, create, list, update, remove } = require("../../../../modules/coupon/repo")
 
 
 
-exports.addOrder = async (req, res) => {
-    let { userId, items } = req.body
+
+exports.addCoupon = async (req, res) => {
     const result = await create(req.body);
     console.log(result)
-    myBook.addMyBook( items.book,userId);
-    res.status(result.code).json({ Order: result.order })
+    res.status(result.code).json({ Coupon: result.record })
 }
 
-exports.deleteOrder = async(req, res) => {
+exports.deleteCoupon = async(req, res) => {
     const result = await remove(req.params.id)
     console.log(result);
         if (result.success) {
@@ -22,18 +20,18 @@ exports.deleteOrder = async(req, res) => {
     }
 }
 
-exports.updateOrder = async(req, res) => {
+exports.updateCoupon = async(req, res) => {
     const result = await update(req.params.id, req.body)
     if (result.success) {
-        res.status(result.code).json({ massage: "Sucsses!", Order: result.order})
+        res.status(result.code).json({ massage: "Sucsses!", Coupon: result.record})
     }
     else {
         res.status(result.code).json({ massage: "Error!", error: result.error})
     }
 }
 
-exports.getOrderById = async(req, res) => {
+exports.getCouponById = async(req, res) => {
     const result = await get(req.params.id)
     console.log(result)
-    res.status(result.code).json({ Order: result.order})
+    res.status(result.code).json({ Coupon: result.record})
 }

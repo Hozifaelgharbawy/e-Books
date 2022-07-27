@@ -1,9 +1,9 @@
-let { get, create, list, update, remove } = require("../../../modules/order/repo")
+let { list, remove } = require("../../../modules/order/repo")
 
 exports.getAllOrder = async(req, res) => {
     const result = await list();
     console.log(result)
-    res.status(result.code).json({ Orders: result.AllOrder})
+    res.status(result.code).json({ Orders: result.records})
 }
 
 exports.deleteOrder = async(req, res) => {

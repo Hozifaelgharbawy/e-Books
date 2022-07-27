@@ -6,7 +6,7 @@ const connection = () => {
     .then(() => {
         console.log("connected to database successfully!!");
     }).catch((err) => {
-        console.log("MongoDB Error");
+        console.log("MongoDB Error", err);
     })
 }
 

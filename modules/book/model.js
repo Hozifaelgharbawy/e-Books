@@ -9,7 +9,8 @@ let bookSchema = mongoose.Schema({
     coverUrl: { type: String, required: true },
     offer: { type: Number, required: false },
     demo: { type: String, required: true },
-    author: [{ type: String, required: true }]
+    author: [{ type: String, required: true }],
+    category: { type: String, required: true },
 })
 
 let bookModel = mongoose.model("books", bookSchema)

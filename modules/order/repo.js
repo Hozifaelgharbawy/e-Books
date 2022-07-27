@@ -1,9 +1,9 @@
 let Order = require("./model")
 
 exports.list = async () => {
-    let AllOrder = await Order.find({})
+    let records = await Order.find({})
     return {
-        AllOrder,
+        records,
         code: 200
     }
 }
@@ -25,7 +25,7 @@ exports.create = async (form) => {
         await order.save();
         return {
             success: true,
-            order: order,
+            record: order,
             code: 200
         };
     }
@@ -44,7 +44,7 @@ exports.update = async (id, form) => {
         const orderUpdate = await Order.findOneAndUpdate({_id: id}, form)
         return {
             success: true,
-            order: orderUpdate,
+            record: orderUpdate,
             code: 200
         };
     }
@@ -80,7 +80,7 @@ exports.isExist = async (value) => {
     if(order) {
         return {
             success: true,
-            order: order,
+            record: order,
             code: 200
         };
     }
