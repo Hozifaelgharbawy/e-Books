@@ -1,4 +1,7 @@
 let Cart = require("./model")
+let { get, update } = require("../book/repo")
+let getCoupon = require("../coupon/repo").get
+let updateCoupon = require("../coupon/repo").update
 
 exports.list = async (filter) => {
     let records = await Cart.find(filter);
@@ -6,7 +9,7 @@ exports.list = async (filter) => {
 }
 
 exports.get = async (filter) => {
-    if(id) return await this.isExist(filter);
+    if (filter) return await this.isExist(filter);
     else {
         return {
             success: false,
@@ -16,86 +19,156 @@ exports.get = async (filter) => {
     }
 }
 
-exports.update = async (filter, form) => {
-    const cart = await this.isExist(filter);
-    console.log(cart);
-    if(cart.success) {
-        let cartUpdate = await Cart.findOneAndUpdate(filter,  form)
-        console.log(cartUpdate);
-        return {
-            success: true,
-            record: cartUpdate,
-            code: 200
-        };
-    }
-    else {
-        return {
-            success: false,
-            error: cart.error,
-            code: 404
-        };
-    }
-}
-
-///--------------
-exports.addBook = async (filter, form) => {
-    const Id = await this.isExist({userId: filter.userId})
-    const cart = await this.isItemsToCart(filter);
-    console.log(cart)
-    let quantity = cart.record
-    console.log(quantity);
-    if(cart.success) {
-        const cartUpdate = await Cart.findOneAndUpdate({userId: filter.userId},{ items: { quantity: quantity+1}})
-        
-        return {
-            success: true,
-            record: cartUpdate,
-            code: 200
-        };
-    }
-    else {
-        const cartUpdate = await Cart.findOneAndUpdate({userId: filter.userId}, {$addToSet: form})
-        return {
-            success: true,
-            record: cartUpdate,
-            code: 200
-        };
-    }
-}
-
-exports.removeBook = async (filter,bookId) => {
-
-    const cart = await this.isExist(filter);
-
-    if(cart.success) {
-        let cartUpdate
-        if(cart.record.items.quantity > 1) {
-            cartUpdate = await Cart.findOneAndUpdate({userId: cart.record.userId}, {items: {quantity: cart.record.items.quantity-1}})
+exports.addPromoCode = async (userId, promoCode) => {
+    let coupon = await getCoupon({ _id: promoCode })
+    if (coupon.success) {
+        if (coupon.record.quantity >= 1) {
+            const cart = await this.isExist({ userId: userId });
+            if (cart.success) {
+                let total = cart.record.total * (coupon.record.discount/100)
+                await Cart.findOneAndUpdate({ userId: userId }, { promoCode: promoCode, total: total  })
+                await updateCoupon(coupon.record._id, { quantity: coupon.record.quantity - 1 })
+                let cartUpdate = await Cart.findOne({ userId: userId })
+                return {
+                    success: true,
+                    record: cartUpdate,
+                    code: 200
+                };
+            }
         }
         else {
-            cartUpdate = await Cart.findOneAndUpdate({userId: cart.record.userId}, {$pull: {items: {book: bookId}}})
+            return {
+                success: false,
+                error: "quantity of coupon have expired",
+                code: 404
+            };
         }
-        return {
-            success: true,
-            record: cartUpdate,
-            code: 200
-        };
     }
     else {
         return {
             success: false,
-            error: cart.error,
+            error: coupon.error,
+            code: 404
+        };
+    }
+}
+
+exports.addItem = async (userId, bookId) => {
+    const book = await get({ _id: bookId })
+    let price = book.record.price - book.record.offer
+    if (book.success) {
+        const cart = await this.isExist({ userId: userId })
+        const item = await this.isItemInCart(cart.record.items, bookId);
+        if (item.success) {
+            let quantity = item.record.quantity + 1
+            let quantityBook = book.record.quantity - 1
+            if (quantityBook >= 0) {
+                let cartTotal = cart.record.total - item.record.total
+                await Cart.updateMany({ userId: userId, "items.book": bookId }, { $set: { "items.$.quantity": quantity, "items.$.total": price * quantity } })
+                await update(bookId, { quantity: quantityBook })
+                await Cart.findOneAndUpdate({ userId: userId }, { total: cartTotal + (price * quantity) })
+                const cartUpdate = await Cart.findOne({ userId: userId });
+                return {
+                    success: true,
+                    record: cartUpdate,
+                    code: 200
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    error: "quantity of book have expired",
+                    code: 404
+                };
+            }
+
+        }
+        else {
+            let quantityBook = book.record.quantity - 1
+            if (quantityBook >= 0) {
+                await Cart.findOneAndUpdate({ userId: userId }, { total: cart.record.total + price, $push: { items: { book: bookId, quantity: 1, total: price } } })
+                const cartUpdate = await Cart.findOne({ userId: userId });
+                await update(bookId, { quantity: quantityBook })
+                return {
+                    success: true,
+                    record: cartUpdate,
+                    code: 200
+                }
+            }
+            else {
+                return {
+                    success: false,
+                    error: "quantity of book have expired",
+                    code: 404
+                };
+            }
+        }
+    }
+    else {
+        return {
+            success: false,
+            error: book.error,
+            code: 404
+        };
+    }
+}
+
+exports.removeItem = async (userId, bookId) => {
+    const book = await get({ _id: bookId })
+    let price = book.record.price - book.record.offer
+    if (book.success) {
+        const cart = await this.isExist({ userId: userId })
+        const item = await this.isItemInCart(cart.record.items, bookId);
+        if (item.success) {
+
+            if (item.record.quantity > 1) {
+                let cartTotal = cart.record.total - item.record.total
+                let quantity = item.record.quantity - 1
+                await Cart.updateMany({ userId: userId, "items.book": bookId }, { $set: { "items.$.quantity": quantity, "items.$.total": price * quantity } })
+                await update(bookId, { quantity: book.record.quantity + 1 })
+                await Cart.findOneAndUpdate({ userId: userId }, { total: cartTotal + (price * quantity) })
+                const cartUpdate = await Cart.findOne({ userId: userId });
+                return {
+                    success: true,
+                    record: cartUpdate,
+                    code: 200
+                };
+            }
+            else {
+                await Cart.findOneAndUpdate({ userId: userId }, { total: cart.record.total - price, $pull: { items: { book: bookId } } })
+                await update(bookId, { quantity: book.record.quantity + 1 })
+                const cartUpdate = await Cart.findOne({ userId: userId });
+                return {
+                    success: true,
+                    record: cartUpdate,
+                    code: 200
+                };
+            }
+
+        }
+        else {
+            return {
+                success: false,
+                error: item.error,
+                code: 200
+            };
+        }
+    }
+    else {
+        return {
+            success: false,
+            error: book.error,
             code: 404
         };
     }
 
 }
-///---------------
-exports.removeAllItems = async (filter) => {
+
+exports.flush = async (filter) => {
     const cart = await this.isExist(filter);
 
-    if(cart.success) {
-        const cartUpdate = await Cart.findOneAndUpdate(filter, {items: []})
+    if (cart.success) {
+        const cartUpdate = await Cart.findOneAndUpdate(filter, { items: [], total: 0 })
         return {
             success: true,
             record: cartUpdate,
@@ -112,38 +185,22 @@ exports.removeAllItems = async (filter) => {
 
 }
 
-
-exports.remove = async (userId, book) => {
-    const cart = await this.isExist(userId);
-    if(cart.success) {
-        await Cart.deleteMany(book)
+exports.isItemInCart = async (arrayOfItems, bookId) => {
+    const result = await arrayOfItems.find(element => {
+        if (element.book == bookId) return element
+    });
+    console.log(result);
+    if (result) {
         return {
             success: true,
-            record: cart.record,
+            record: result,
             code: 200
         };
     }
     else {
         return {
             success: false,
-            code: 404
-        };
-    }
-}
-
-exports.isItemsToCart = async (filter) => {
-    const cart = await Cart.findOne(filter);
-    if(cart) {
-        return {
-            success: true,
-            record: cart,
-            code: 200
-        };
-    }
-    else {
-        return {
-            success: false,
-
+            error: "book that is not in items",
             code: 404
         };
     }
@@ -151,7 +208,7 @@ exports.isItemsToCart = async (filter) => {
 
 exports.isExist = async (filter) => {
     const cart = await Cart.findOne(filter);
-    if(cart) {
+    if (cart) {
         return {
             success: true,
             record: cart,
@@ -159,7 +216,7 @@ exports.isExist = async (filter) => {
         };
     }
     else {
-        const cart = new Cart({ userId: filter.userId, total: 0})
+        const cart = new Cart({ userId: filter.userId, total: 0 })
         await cart.save();
         return {
             success: true,

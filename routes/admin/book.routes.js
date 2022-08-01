@@ -1,12 +1,8 @@
 const app = require("express").Router();
 let controller = require("../../controller/admin/book/book.controller");
-let endPoints = require("../../helpers/endPoints")
-let checkRole = require("../../utils/checkRole")
 
 
 
-app.delete("/book/:id",checkRole(endPoints), controller.deleteBook)
-app.get("/book", checkRole(endPoints), controller.getAllBook)
-
-
+app.get("/book/getAllBooks", controller.getAllBooks)
+app.get("/book/getBook", controller.getBook)
 module.exports = app

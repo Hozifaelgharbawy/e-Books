@@ -1,9 +1,8 @@
 const app = require("express").Router();
 let controller = require("../../controller/admin/order/order.controller");
-let endPoints = require("../../helpers/endPoints")
-let checkRole = require("../../utils/checkRole")
 
-app.get("/order", checkRole(endPoints), controller.getAllOrder)
-app.delete("/order/:id",checkRole(endPoints), controller.deleteOrder)
+
+app.get("/order/getAllOrders", controller.getAllOrders)
+app.get("/order/getOrder", controller.getOrder)
 
 module.exports = app

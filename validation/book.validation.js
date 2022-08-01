@@ -42,13 +42,16 @@ module.exports = {
 
             price: joi.number().required().messages({
                 "number.base": "please enter a valid price",
-                "any.required": "age must be price",
+                "any.required": "price must be entered",
             }),
 
             offer: joi.number().optional().messages({
                 "number.base": "please enter a valid offer"
             }),
-            
+            quantity:joi.number().required().messages({
+                "number.base": "please enter a valid quantity",
+                "any.required": "quantity must be entered",
+            }),
             author: joi.alternatives().required().try(
                 joi.string().empty().required().messages({
                     "string.base": "please enter a valid author",
@@ -113,6 +116,9 @@ module.exports = {
 
             offer: joi.number().optional().messages({
                 "number.base": "please enter a valid offer"
+            }),
+            quantity:joi.number().optional().messages({
+                "number.base": "please enter a valid quantity"
             }),
             
             author: joi.alternatives().optional().try(

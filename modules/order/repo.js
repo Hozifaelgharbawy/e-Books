@@ -1,28 +1,37 @@
 let Order = require("./model")
+let { get, flush } = require("../cart/repo")
+let { addBookToMyBooks } = require("../user/repo")
+let getSeller = require("../user/repo").get
 
-exports.list = async () => {
-    let records = await Order.find({})
+
+exports.list = async (filter) => {
+    let records = await Order.find(filter)
     return {
         records,
         code: 200
     }
 }
 
-exports.get = async (id) => {
-    if(id) return await this.isExist(id);
+exports.get = async (filter) => {
+    if (filter) return await this.isExist(filter);
     else {
         return {
             success: false,
-            code: 404,
-            error: "Order ID required"
+            code: 404
         }
     }
 }
 
-exports.create = async (form) => {
-    if (form) {
-        const order = new Order(form)
+exports.create = async (cartId) => {
+    let cart = await get({ _id: cartId })
+    if (cart.success) {
+        const order = new Order({ userId: cart.record.userId, cartId: cart.record._id, items: cart.record.items, total: cart.record.total })
         await order.save();
+
+        await order.items.forEach(element => {
+            addBookToMyBooks({ _id: cart.record.userId }, element.book)
+        });
+        await flush({ _id: cartId })
         return {
             success: true,
             record: order,
@@ -32,52 +41,48 @@ exports.create = async (form) => {
     else {
         return {
             success: false,
+            error: cart.error,
             code: 404
         };
     }
 }
 
-exports.update = async (id, form) => {
-    const order = await this.isExist(id);
-
-    if(order.success) {
-        const orderUpdate = await Order.findOneAndUpdate({_id: id}, form)
-        return {
-            success: true,
-            record: orderUpdate,
-            code: 200
-        };
-    }
-    else {
-        return {
-            success: false,
-            error: order.error,
-            code: 404
-        };
+exports.getAllOrdersToSeller = async (sellerId) => {
+    let seller = await getSeller({ _id: sellerId })
+    let orders = await Order.find({})
+    let arr = []
+    await orders.find(element => {
+        element.items.find(item => {
+            seller.record.myBooks.find(book => {
+                if (item.book = book) arr.push({ userId: element.userId, book: book, quantity: item.quantity })
+            });
+        });
+    });
+    return {
+        code: 200,
+        records: arr,
+        success: true
     }
 }
 
-exports.remove = async (id) => {
-    const order = await this.isExist(id);
-    if(order.success) {
-        await Order.findByIdAndDelete(id)
-        return {
-            success: true,
-            code: 200
-        };
-    }
-    else {
-        return {
-            success: false,
-            error: order.error,
-            code: 404
-        };
+exports.getAllOrdersToBook = async (bookId) => {
+    let orders = await Order.find({})
+    let arr = []
+    await orders.find(element => {
+        element.items.find(item => {
+            if (item.book = bookId) arr.push({ userId: element.userId, book: bookId, quantity: item.quantity })
+        });
+    });
+    return {
+        code: 200,
+        records: arr,
+        success: true
     }
 }
 
 exports.isExist = async (value) => {
-    const order = await Order.findOne({ _id: value});
-    if(order) {
+    const order = await Order.findOne({ _id: value });
+    if (order) {
         return {
             success: true,
             record: order,

@@ -1,17 +1,18 @@
 let { get, list, remove, update } = require("../../../modules/user/repo")
 
 
-exports.getUserById = async (req, res) => {
-    const result = await get(req.params.id)
+exports.getUser = async (req, res) => {
+    const result = await get(req.query)
     console.log(result)
     res.status(result.code).json({ user: result.record })
 }
 
-exports.getAllUser = async (req, res) => {
-    const result = await list();
+exports.getAllUsers= async (req, res) => {
+    const result = await list(req.query);
     console.log(result)
-    res.status(200).json({ user: result })
+    res.status(200).json({ books: result })
 }
+
 
 exports.deleteUser = async (req, res) => {
     const result = await remove(req.params.id)

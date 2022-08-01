@@ -1,13 +1,14 @@
-const { findById } = require("./model");
 let Book = require("./model")
+let {addBookToMyBooks, removeBookFromMyBooks} = require("../user/repo")
+
 
 exports.list = async (filter) => {
     let records = await Book.find(filter).select("-fileUrl");
     return records;
 }
 
-exports.get = async (id) => {
-    if(id) return await this.isExist(id);
+exports.get = async (filter) => {
+    if(filter) return await this.isExist(filter);
     else {
         return {
             success: false,
@@ -17,10 +18,13 @@ exports.get = async (id) => {
     }
 }
 
-exports.create = async (form) => {
-    if (form) {
+exports.create = async (sellerId,form) => {
+    const book = await this.isExist({title: form.title});
+    console.log(book);
+    if (!book.success) {
         const book = new Book(form)
         await book.save();
+        await addBookToMyBooks({_id: sellerId}, book._id)
         return {
             success: true,
             record: book,
@@ -30,18 +34,20 @@ exports.create = async (form) => {
     else {
         return {
             success: false,
+            error: "book is already there",
             code: 404
         };
     }
 }
 
 exports.update = async (id, form) => {
-    const book = await this.isExist(id);
+    const book = await this.isExist({_id: id});
     if(id && book.success) {
-        const bookUpdate = await Book.findByIdAndUpdate({_id: id}, form)
+        await Book.findByIdAndUpdate({_id: id}, form)
+        const bookUpdate = await this.isExist({_id: id});
         return {
             success: true,
-            record: bookUpdate,
+            record: bookUpdate.record,
             code: 200
         };
     }
@@ -54,10 +60,11 @@ exports.update = async (id, form) => {
     }
 }
 
-exports.remove = async (id) => {
-    const book = await this.isExist(id);
-    if(id && book.success) {
-        await Book.findByIdAndDelete({_id: id})
+exports.remove = async (sellerId, bookId) => {
+    const book = await this.isExist({_id: bookId});
+    if(book.success) {
+        await Book.findByIdAndDelete({_id: bookId})
+        await removeBookFromMyBooks({_id:sellerId}, bookId)
         return {
             success: true,
             code: 200
@@ -72,8 +79,8 @@ exports.remove = async (id) => {
     }
 }
 
-exports.isExist = async (value) => {
-    const book = await Book.findOne({ _id: value}).select("-fileUrl");
+exports.isExist = async (filter) => {
+    const book = await Book.findOne(filter).select("-fileUrl");
     if(book) {
         return {
             success: true,

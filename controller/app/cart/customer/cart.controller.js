@@ -1,50 +1,49 @@
-let BookRepo = require("../../../../modules/book/repo")
-let { get, update, removeBook, addBook, removeAllItems } = require("../../../../modules/cart/repo")
-let User = require("../../../../modules/user/repo")
+let { get, addPromoCode, removeItem, addItem } = require("../../../../modules/cart/repo")
 
 
 
 
 exports.getMyCart = async (req, res) => {
-    const user = await User.isExist(req.query.userId)
-    if (user.success) {
-        const result = await get(req.query)
-        console.log(result)
+    const result = await get({ userId: req.query.userId })
+    console.log(result)
+    if (result.success) {
         res.status(result.code).json({ cart: result.record })
     }
     else {
-        res.status(user.code).json({ error: user.error })
+        res.status(result.code).json({ error: result.error })
     }
 }
-exports.removeItems = async (req, res) => {
-    
-    const result = await removeAllItems(req.query)
+
+exports.addPromoCode = async (req, res) => {
+    let { promoCode } = req.body
+    const result = await addPromoCode(req.params.userId, promoCode)
     console.log(result)
-    res.status(result.code).json({ cart: result.record })
-
-
-}
-
-exports.updateCart = async (req, res) => {
-    const result = await update(req.query, req.body)
-    console.log(result)
-    res.status(result.code).json({ cart: result.record })
+    if (result.success) {
+        res.status(result.code).json({ cart: result.record })
+    }
+    else {
+        res.status(result.code).json({ error: result.error })
+    }
 }
 
 exports.addBookInCart = async (req, res) => {
-    const result = await addBook(req.query, req.body)
+    const result = await addItem(req.params.userId, req.params.bookId)
     console.log(result)
-    res.status(result.code).json({ cart: result.record })
+    if (result.success) {
+        res.status(result.code).json({ cart: result.record })
+    }
+    else {
+        res.status(result.code).json({ error: result.error })
+    }
 }
 
 exports.deleteBookInCart = async (req, res) => {
-
-    const result = await removeBook(req.query, req.params.bookId)
-    console.log(result.record)
+    const result = await removeItem(req.params.userId, req.params.bookId)
+    console.log(result)
     if (result.success) {
-        res.status(result.code).json({ items: result.record })
+        res.status(result.code).json({ cart: result.record })
     }
     else {
-        res.status(result.code).json({ message: "Book Not in cart" })
+        res.status(result.code).json({ error: result.error })
     }
 }

@@ -1,12 +1,9 @@
 const app = require("express").Router();
 let controller = require("../../controller/admin/cart/cart.controller");
 
-let endPoints = require("../../helpers/endPoints")
-let checkRole = require("../../utils/checkRole")
 
-
-app.get("/cart",checkRole(endPoints), controller.getAllCart)
-
+app.get("/cart/getAllCarts", controller.getAllCarts)
+app.get("/cart/getCart", controller.getCart)
 
 
 module.exports = app

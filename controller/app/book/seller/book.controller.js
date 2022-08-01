@@ -1,18 +1,21 @@
 
 let { get, create, update, remove } = require("../../../../modules/book/repo")
-let Seller = require("../../../../modules/user/repo")
 
 
 
 exports.addNewBook = async (req, res) => {
-    const result = await create(req.body);
-    const seller = await Seller.update(req.params.id, {myBooks: result.record})
-    console.log(result, seller)
-    res.status(result.code).json({ book: result.record })
+    const result = await create(req.params.sellerId,req.body);
+    console.log(result)
+    if (result.success) {
+        res.status(result.code).json({ book: result.record })
+    }
+    else {
+        res.status(result.code).json({ error: result.error })
+    }
 }
 
 exports.deleteBook = async(req, res) => {
-    const result = await remove(req.params.id)
+    const result = await remove(req.params.sellerId,req.params.bookId)
     console.log(result);
         if (result.success) {
         res.status(result.code).json({ massage: "Sucsses!" })
@@ -32,8 +35,8 @@ exports.updateBook = async(req, res) => {
     }
 }
 
-exports.getBookById = async(req, res) => {
-    const result = await get(req.params.id)
+exports.getBook = async(req, res) => {
+    const result = await get(req.query)
     console.log(result)
     res.status(result.code).json({ book: result.record})
 }

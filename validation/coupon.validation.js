@@ -20,11 +20,11 @@ module.exports = {
             }),
             quantity: joi.number().required().messages({
                 "number.base": "please enter a valid quantity",
-                "any.required": "quantity must be price"
+                "any.required": "quantity must be entered"
             }),
             discount: joi.number().required().messages({
-                "number.base": "please enter a valid quantity",
-                "any.required": "total must be quantity"
+                "number.base": "please enter a valid discount",
+                "any.required": "discount must be entered"
             })
         })
     },
@@ -44,12 +44,10 @@ module.exports = {
                 "string.empty": "code cannot be empty"
             }),
             quantity: joi.number().optional().messages({
-                "number.base": "please enter a valid quantity",
-                "any.required": "quantity must be price"
+                "number.base": "please enter a valid quantity"
             }),
             discount: joi.number().optional().messages({
-                "number.base": "please enter a valid quantity",
-                "any.required": "total must be quantity"
+                "number.base": "please enter a valid discount"
             })
 
         })
