@@ -25,7 +25,7 @@ exports.addPromoCode = async (userId, promoCode) => {
         if (coupon.record.quantity >= 1) {
             const cart = await this.isExist({ userId: userId });
             if (cart.success) {
-                let total = cart.record.total * (coupon.record.discount/100)
+                let total = cart.record.total - (cart.record.total * (coupon.record.discount/100))
                 await Cart.findOneAndUpdate({ userId: userId }, { promoCode: promoCode, total: total  })
                 await updateCoupon(coupon.record._id, { quantity: coupon.record.quantity - 1 })
                 let cartUpdate = await Cart.findOne({ userId: userId })

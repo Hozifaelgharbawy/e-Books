@@ -4,6 +4,7 @@ let { get, create, update, remove } = require("../../../../modules/book/repo")
 
 
 exports.addNewBook = async (req, res) => {
+    console.log(req.body);
     const result = await create(req.params.sellerId,req.body);
     console.log(result)
     if (result.success) {

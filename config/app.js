@@ -24,7 +24,7 @@ app.use(handelCorsPlicy);
 app.use(express.json())
 app.use(sessionAuth)
 app.use(AuthRoutes)
-app.use(checkRole(endPoints))
+//app.use(checkRole(endPoints))
 app.use(routes)
 
 
