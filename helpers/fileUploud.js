@@ -2,7 +2,7 @@ const multer = require("multer")
 
 const fileStorageEngine = multer.diskStorage({
     destination: (req, file, cd) => {
-        cd(null, "./url/file")
+        cd(null, "./uploads/file")
     },
     filename: (req, file, cd) => {
         cd(null, Date.now() + "--" + file.originalname)
@@ -11,7 +11,7 @@ const fileStorageEngine = multer.diskStorage({
 
 const coverStorageEngine = multer.diskStorage({
     destination: (req, file, cd) => {
-        cd(null, "./url/cover")
+        cd(null, "./uploads/cover")
     },
     filename: (req, file, cd) => {
         cd(null, Date.now() + "--" + file.originalname)
@@ -20,7 +20,7 @@ const coverStorageEngine = multer.diskStorage({
 
 const demoStorageEngine = multer.diskStorage({
     destination: (req, file, cd) => {
-        cd(null, "./url/demo")
+        cd(null, "./uploads/demo")
     },
     filename: (req, file, cd) => {
         cd(null, Date.now() + "--" + file.originalname)

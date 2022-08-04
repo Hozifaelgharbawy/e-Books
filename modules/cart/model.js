@@ -1,5 +1,15 @@
 let mongoose = require("mongoose");
 
+let item = mongoose.Schema({
+
+    book: {
+        type: Object,
+        ref: "books"
+    },
+    quantity: Number,
+    total: Number
+
+});
 
 let cartSchema = mongoose.Schema({
     userId: {
@@ -8,7 +18,10 @@ let cartSchema = mongoose.Schema({
     },
     items: [
         {
-            book: { type: mongoose.Types.ObjectId, ref: "books" },
+            book: {
+                type: Object,
+                ref: "books"
+            },
             quantity: Number,
             total: Number
         }

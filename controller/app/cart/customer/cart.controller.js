@@ -1,4 +1,4 @@
-let { get, addPromoCode, removeItem, addItem } = require("../../../../modules/cart/repo")
+let { get, applyCoupon, removeItem, addItem } = require("../../../../modules/cart/repo")
 
 
 
@@ -14,9 +14,9 @@ exports.getMyCart = async (req, res) => {
     }
 }
 
-exports.addPromoCode = async (req, res) => {
+exports.applyCoupon = async (req, res) => {
     let { promoCode } = req.body
-    const result = await addPromoCode(req.params.userId, promoCode)
+    const result = await applyCoupon(req.params.userId, promoCode)
     console.log(result)
     if (result.success) {
         res.status(result.code).json({ cart: result.record })
@@ -27,8 +27,8 @@ exports.addPromoCode = async (req, res) => {
 }
 
 exports.addBookInCart = async (req, res) => {
-    const result = await addItem(req.params.userId, req.params.bookId)
-    console.log(result)
+    const result = await addItem(req.params.userId, req.params.bookId, req.params.quantity)
+    
     if (result.success) {
         res.status(result.code).json({ cart: result.record })
     }
@@ -38,8 +38,7 @@ exports.addBookInCart = async (req, res) => {
 }
 
 exports.deleteBookInCart = async (req, res) => {
-    const result = await removeItem(req.params.userId, req.params.bookId)
-    console.log(result)
+    const result = await removeItem(req.params.userId, req.params.bookId, req.params.quantity)
     if (result.success) {
         res.status(result.code).json({ cart: result.record })
     }

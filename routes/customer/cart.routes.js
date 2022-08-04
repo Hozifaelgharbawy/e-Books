@@ -7,9 +7,9 @@ let validator = require("../../helpers/common.validate")
 
 
 app.get("/cart", controller.getMyCart)
-app.put("/cart/addPromoCode/:userId", validator(addBookInCartVaidation), controller.addPromoCode)
-app.put("/cart/:userId/:bookId", validator(addBookInCartVaidation), controller.addBookInCart)
-app.delete("/cart/:userId/:bookId", controller.deleteBookInCart)
+app.put("/cart/coupon/:userId", validator(addBookInCartVaidation), controller.applyCoupon)
+app.put("/cart/:userId/:bookId/:quantity", validator(addBookInCartVaidation), controller.addBookInCart)
+app.delete("/cart/:userId/:bookId/:quantity", controller.deleteBookInCart)
 
 
 
