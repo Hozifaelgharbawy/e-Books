@@ -28,7 +28,7 @@ const GET_MY_COUPONS = "coupon:GET_MY_COUPONS"
 
 const GET_ALL_CARTS = "cart:GET_ALL_CARTS"
 const GET_MY_CART = "cart:GET_MY_CART"
-const ADD_PROMOCODE = "cart:ADD_PROMOCODE"
+const APPLY_COUPON = "cart:APPLY_COUPON"
 const ADD_BOOK_IN_CART = "cart:ADD_BOOK_IN_CART"
 const DELETE_BOOK_IN_CART = "cart:DELETE_BOOK_IN_CART"
 const GET_CART = "cart:GET_CART"
@@ -72,7 +72,7 @@ module.exports = {
     GET_ALL_CARTS,
     GET_MY_CART,
     GET_CART,
-    ADD_PROMOCODE,
+    APPLY_COUPON,
     ADD_BOOK_IN_CART,
     DELETE_BOOK_IN_CART,
 

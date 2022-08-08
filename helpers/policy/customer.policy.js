@@ -11,7 +11,7 @@ module.exports = [
 
 
     endPoints.GET_MY_CART,
-    endPoints.ADD_PROMOCODE,
+    endPoints.APPLY_COUPON,
     endPoints.ADD_BOOK_IN_CART,
     endPoints.DELETE_BOOK_IN_CART,
 

@@ -4,7 +4,7 @@ let endPoints = require("../../helpers/endPoints")
 let checkRole = require("../../utils/checkRole")
 
 app.get("/book", checkRole(endPoints.GET_ALL_BOOKS), controller.getAllBooks)
-app.get("/book", controller.getBook)
+app.get("/book", checkRole(endPoints.GET_BOOK), controller.getBook)
 
 
 
